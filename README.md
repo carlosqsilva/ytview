@@ -8,6 +8,4 @@ npm install -g ytview
 
 # Usage
 
-```sh
-ytview
-```
+<img src='./usage.gif' />
