@@ -1,0 +1,29 @@
+{
+  "name": "ytview",
+  "version": "1.0.1",
+  "description": "Simple command line tool to search and view youtube videos on vlc or mpv player.",
+  "main": "index.js",
+  "keywords": [
+    "youtube",
+    "ytsearch",
+    "ytview",
+    "CLI"
+  ],
+  "author": {
+    "name": "Carlos Silva",
+    "email": "carlosqsilva@outlook.com",
+    "url": "https://carlosqsilva.github.io"
+  },
+  "bin": {
+    "ytview": "./index.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.1.0",
+    "clear": "0.0.1",
+    "clui": "^0.3.6",
+    "figlet": "^1.2.0",
+    "inquirer": "^3.3.0",
+    "node-fetch": "^1.7.3"
+  }
+}
