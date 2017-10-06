@@ -1,6 +1,6 @@
 {
   "name": "ytview",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Simple command line tool to search and view youtube videos on vlc or mpv player.",
   "main": "index.js",
   "keywords": [
