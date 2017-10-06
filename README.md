@@ -9,5 +9,5 @@ npm install -g ytview
 # Usage
 
 ```sh
-    ytview
+ytview
 ```
