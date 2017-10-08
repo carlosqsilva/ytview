@@ -14,6 +14,10 @@
     "email": "carlosqsilva@outlook.com",
     "url": "https://carlosqsilva.github.io"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/carlosqsilva/ytview.git"
+  },
   "bin": {
     "ytview": "./index.js"
   },
