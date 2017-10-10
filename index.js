@@ -8,7 +8,9 @@ const chalk = require('chalk')
 const figlet = require('figlet')
 const clear = require('clear')
 
-const { spawn } = require('child_process')
+const {
+    spawn
+} = require('child_process')
 
 process.on('exit', () => clear())
 
@@ -16,7 +18,9 @@ clear()
 
 console.log(
     chalk.red(
-        figlet.textSync('ytSearch', { horizontalLayout: 'full' })
+        figlet.textSync('ytSearch', {
+            horizontalLayout: 'full'
+        })
     )
 )
 
@@ -27,7 +31,7 @@ const isEmpty = (value) => {
 }
 
 const repeat = (value, count) => {
-    return new Array(count +1).join(value)
+    return new Array(count + 1).join(value)
 }
 
 const padLeft = (value, padding) => {
@@ -51,48 +55,44 @@ const createRows = (data) => {
             width = channelTitle.length
         }
     }
-    
+
     for (let j = 0; j < length; j++) {
         let value = channelTitles[j]
         let padding = width - value.length
         let left = padLeft(value, padding)
         rows[j] = `${left} : ${videoTitles[j]}`
     }
-
+    
     return rows
-} 
+}
 
-const videos_search = async (q) => {
+const videos_search = (q) => {
     let query = q.trim().split(" ").filter(isEmpty).join("+")
     let url = `${baseURL}&q=${query}`
-    
-    const response = await fetch(url)
-    const data = await response.json()
 
-    return data
+    return fetch(url)
 }
 
 const ask_input = () => {
     const input_query = [{
         type: 'input',
-        name: 'query',
+        name: 'answer',
         message: 'Search term: ',
         validate: (query) => {
-            if (query.length){
+            if (query.length) {
                 return true
             } else {
                 return 'Please enter a search term: '
             }
         }
     }]
-
     return inquirer.prompt(input_query)
 }
 
 const choose_options = (videos) => {
-    const options =[{
+    const options = [{
         type: 'list',
-        name: 'video',
+        name: 'answer',
         pageSize: 10,
         message: 'Choose a video: ',
         choices: videos
@@ -104,32 +104,43 @@ const choose_options = (videos) => {
 const choose_player = (video_url) => {
     const options = [{
         type: 'list',
-        name: 'player',
+        name: 'answer',
         message: 'Choose your video player: ',
         choices: ['vlc', 'mpv']
     }]
 
-    return inquirer.prompt(options).then(resp => {
-        const child = spawn(resp.player, [video_url], {detached:true})
-        child.unref()
-        process.exit()
-    })
+    return inquirer.prompt(options)
 }
 
-ask_input().then(params => {
+const start = async ()  => {
+    let query = await ask_input()
+
     let status = new spinner(chalk.red("Searching Please wait..."))
     status.start()
-    
-    videos_search(params.query).then(videos => {        
-        let id = videos.items.map( video => video.id.videoId)
-        let rows = createRows(videos)
-        
-        status.stop()
-        choose_options(rows).then(resp => {
-            let video_id = id[rows.indexOf(resp.video)]
-            let video_url = `https://www.youtube.com/watch?v=${video_id}`
 
-            choose_player(video_url)
-        })            
-    })
-})
+    let response = await videos_search(query.answer)
+    let results = await response.json()
+    let id = results.items.map(video => video.id.videoId)
+    let rows = createRows(results)
+    let tryAgain = "Cancel ==> Search Again."
+    rows.push(tryAgain)
+
+    status.stop()
+
+    let option = await choose_options(rows)
+        
+    if (option.answer !== tryAgain) {
+        let player = await choose_player()
+
+        let video_url = `https://www.youtube.com/watch?v=${id[rows.indexOf(option.answer)]}`
+        const child = spawn(player.answer, [video_url], {
+            detached: true
+        })
+        child.unref()
+        process.exit()
+    } else {
+        start()
+    }
+}
+
+start()
